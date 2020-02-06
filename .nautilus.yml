@@ -1,0 +1,120 @@
+deploy:
+  force: false
+flows:
+  - flow_2019_ncov_realtime_data_search:
+      name: 2019年武汉新冠病毒疫情查询
+      trigger: flow_2019_ncov_realtime_data_search
+      hostname: flow_ncov
+      parameters:
+        - github_app
+        - clientip
+        - event
+      follows:
+        - name: 获取丁香园2019武汉疫情数据
+          trigger: exc
+          parameters:
+            - method;get
+            - urlabs;https://lab.isaaclin.cn/nCoV/api/overall
+          outputs:
+            - executed
+          next:
+            - name: 丁香园数据转换为播报协议数据
+              trigger: translate_2019_ncov_realtime_data
+              parameters:
+                - datasource;$.parent.outputs
+                - merge_remind;$.root.parameters.remind
+              outputs:
+                - cleaned
+              next:
+                - name: 发送播报协议数据给冥王星客户端
+                  trigger: ann
+                  parameters:
+                    - announceTo;$.parent.outputs.cleaned.announceTo
+                    - announceType;$.parent.outputs.cleaned.announceType
+                    - announceContent;$.parent.outputs.cleaned.announceContent
+                  outputs:
+                    - result
+executors:
+  - translate_2019_ncov_realtime_data:
+      name: 丁香园数据转换为播报协议数据
+      hostname: nashorn_ncov
+      container: acj
+      scriptengine: Nashorn
+      clean: |
+        function clean(datasource) {
+          var result = {};
+
+          print('Start Nashorn Javascript processing...');
+          print(datasource);
+
+          // filter source code here start
+          var input = JSON.parse(datasource);
+
+          var data = input.data;
+          for (var di in input.data) {
+            var dt = input.data[di];
+            if (dt['sub'] === 'nlp' && dt['intent']['service'] === 'OS6981162467.FindAgenda' && dt['intent']['intentType'] === 'custom' && dt['intent']['semantic']) {
+              data = dt;
+            }
+          }
+
+          var userId = input['_context']['userId'];
+          var deviceId = input['_context']['deviceId'];
+          var text = data['intent']['text'];
+
+          var formatDateTime = function(date) {
+              return date.getFullYear() + '/' + (date.getMonth()+1) + '/' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+          }
+
+          var output = {
+            header: {},
+            content: {}
+          };
+
+          output.original = text;
+
+          // 回复客户端
+          output.header = {
+            version: 'V1.1',
+            sender: 'xunfei',
+            datetime: formatDateTime(new Date()),
+            describe: ['S']
+          };
+
+          output.content['0'] = {
+            processor: 'S',
+            option: 'S.AN',
+            parameters: {
+              an: '请求已发出'   // 自动打包指令已发出
+            }
+          };
+
+          var standardnext = {};
+
+          standardnext.announceTo = [userId + ';' + deviceId];
+          standardnext.announceType = 'inteligence_mix';
+          standardnext.announceContent = {mwxing:output};
+
+          print(JSON.stringify(standardnext));
+
+          // filter source code here end
+          return JSON.stringify(standardnext);
+        }
+dispatch:
+  events:
+    - name: 2019-nCov疫情查询订阅
+      type: WEBHOOK
+      id: nautilus_2019_ncov_follow_webhook_xunfei.aiui_notification
+      event: WEBHOOK_EVENT.INTERNAL
+      filters:
+        - name: webhook
+          value: event.internal
+        - name: category
+          value: xunfei/aiui
+        - name: type
+          value: intent
+        - name: service
+          value: OS6981162467.FindAgenda
+        - name: intent
+          value: Se2019nCovDay
+      flow: flow_2019_ncov_realtime_data_search
