@@ -53,7 +53,11 @@ executors:
           var ncov = input.executed.response.results[0];
 
           var confirmedCount = ncov.confirmedCount;
+          var suspectedCount = ncov.suspectedCount;
+          var curedCount = ncov.curedCount;
+          var deadCount = ncov.deadCount;
           var updatetime = ncov.updateTime;
+          var generalRemark = ncov.generalRemark;
 
           var xunfeidata = input.request.event.output.payload.xunfeiyun;
           var data = xunfeidata;
@@ -92,7 +96,12 @@ executors:
             processor: 'S',
             option: 'S.AN',
             parameters: {
-              an: '截至' + formatDateTime(new Date(updatetime)) + ', 国内累计确诊病例' + confirmedCount + '人'   // 累计确诊病例
+              an: '截至' + formatDateTime(new Date(updatetime)) + '数据'
+                  + ', \n国内累计确诊病例' + confirmedCount + '人'
+                  + ', \n累计疑似病例' + suspectedCount + '人'
+                  + ', \n累计治愈病例' + curedCount + '人'
+                  + ', \n累计死亡病例' + deadCount + '人'
+                  + ', \n' + generalRemark   // 累计确诊病例
             },
             input: {
               textvariables: [
