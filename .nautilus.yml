@@ -22,7 +22,7 @@ flows:
               trigger: translate_2019_ncov_realtime_data
               parameters:
                 - datasource;$.parent.outputs
-                - merge_remind;$.root.parameters.remind
+                - merge_request;$.root.parameters
               outputs:
                 - cleaned
               next:
