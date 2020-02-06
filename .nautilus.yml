@@ -92,7 +92,7 @@ executors:
             processor: 'S',
             option: 'S.AN',
             parameters: {
-              an: '截至{countto}, 国内累计确诊病例{confirmed}人'   // 累计确诊病例
+              an: '截至' + formatDateTime(new Date(updatetime)) + ', 国内累计确诊病例' + confirmedCount + '人'   // 累计确诊病例
             },
             input: {
               textvariables: [
