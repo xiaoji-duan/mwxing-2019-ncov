@@ -85,7 +85,12 @@ executors:
             processor: 'S',
             option: 'S.AN',
             parameters: {
-              an: '请求已发出'   // 自动打包指令已发出
+              an: '目前确诊病例{confirmed}人'   // 自动打包指令已发出
+            },
+            input: {
+              textvariables: [
+                {name: 'confirmed', value: '1111'}
+              ]
             }
           };
 
