@@ -50,7 +50,9 @@ executors:
           // filter source code here start
           var input = JSON.parse(datasource);
 
-          var ncov = input.executed;
+          var ncov = input.executed.response.results[0];
+
+          var confirmedCount = ncov.confirmedCount;
 
           var xunfeidata = input.request.event.output.payload.xunfeiyun;
           var data = xunfeidata;
@@ -93,7 +95,7 @@ executors:
             },
             input: {
               textvariables: [
-                {name: 'confirmed', value: '28129'}
+                {name: 'confirmed', value: confirmedCount}
               ]
             }
           };
