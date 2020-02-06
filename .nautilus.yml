@@ -53,6 +53,7 @@ executors:
           var ncov = input.executed.response.results[0];
 
           var confirmedCount = ncov.confirmedCount;
+          var updatetime = ncov.updateTime;
 
           var xunfeidata = input.request.event.output.payload.xunfeiyun;
           var data = xunfeidata;
@@ -91,10 +92,11 @@ executors:
             processor: 'S',
             option: 'S.AN',
             parameters: {
-              an: '目前累计确诊病例{confirmed}人'   // 累计确诊病例
+              an: '截至{countto}, 国内累计确诊病例{confirmed}人'   // 累计确诊病例
             },
             input: {
               textvariables: [
+                {name: 'countto', value: formatDateTime(new Date(updatetime))},
                 {name: 'confirmed', value: confirmedCount}
               ]
             }
