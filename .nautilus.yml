@@ -115,7 +115,8 @@ executors:
                   + ', \n重症' + seriousCount + '人'
                   + ', \n新增' + seriousIncr + '人'
                   + ', \n' + generalRemark,                             // 累计确诊病例
-              tips: ncov.remark1
+              tips: '数据来自丁香园'
+                  + '|' + ncov.remark1
                   + '|' + ncov.remark2
                   + '|' + ncov.remark3
                   + '|' + ncov.note1
