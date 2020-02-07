@@ -53,9 +53,16 @@ executors:
           var ncov = input.executed.response.results[0];
 
           var confirmedCount = ncov.confirmedCount;
+          var confirmedIncr = ncov.confirmedIncr;
           var suspectedCount = ncov.suspectedCount;
+          var suspectedIncr = ncov.suspectedIncr;
           var curedCount = ncov.curedCount;
+          var curedIncr = ncov.curedIncr;
           var deadCount = ncov.deadCount;
+          var deadIncr = ncov.deadIncr;
+          var seriousCount = ncov.seriousCount;
+          var seriousIncr = ncov.seriousIncr;
+
           var updatetime = ncov.updateTime;
           var generalRemark = ncov.generalRemark;
 
@@ -98,10 +105,22 @@ executors:
             parameters: {
               an: '截至' + formatDateTime(new Date(updatetime)) + '数据'
                   + ', \n国内累计确诊病例' + confirmedCount + '人'
-                  + ', \n累计疑似病例' + suspectedCount + '人'
-                  + ', \n累计治愈病例' + curedCount + '人'
-                  + ', \n累计死亡病例' + deadCount + '人'
-                  + ', \n' + generalRemark   // 累计确诊病例
+                  + ', \n新增' + confirmedIncr + '人'
+                  + ', \n疑似' + suspectedCount + '人'
+                  + ', \n新增' + suspectedIncr + '人'
+                  + ', \n治愈' + curedCount + '人'
+                  + ', \n新增' + curedIncr + '人'
+                  + ', \n死亡' + deadCount + '人'
+                  + ', \n新增' + deadIncr + '人'
+                  + ', \n重症' + seriousCount + '人'
+                  + ', \n新增' + seriousIncr + '人'
+                  + ', \n' + generalRemark,                             // 累计确诊病例
+              tips: ncov.remark1
+                  + '|' + ncov.remark2
+                  + '|' + ncov.remark3
+                  + '|' + ncov.note1
+                  + '|' + ncov.note2
+                  + '|' + ncov.note3
             },
             input: {
               textvariables: [
