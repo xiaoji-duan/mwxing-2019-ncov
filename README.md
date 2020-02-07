@@ -4,7 +4,7 @@
 ## 使用方法
 冥王星app - AI - 语音/文字输入：“今天疫情怎么样了”
 
-![](https://github.com/xiaoji-duan/mwxing-2019-ncov/blob/master/images/screenshot-mwxing.jpg?raw=true)
+![](https://github.com/xiaoji-duan/mwxing-2019-ncov/raw/master/images/screenshot-mwxing.jpg)
 
 [下载冥王星](https://fir.im/d2z3)
 - 支持安卓(Android)
