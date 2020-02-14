@@ -14,7 +14,7 @@ flows:
           trigger: exc
           parameters:
             - method;get
-            - urlabs;https://lab.isaaclin.cn/nCoV/api/overall
+            - urlabs;https://lab.isaaclin.cn/nCoV/api/overall?latest=1
           outputs:
             - executed
           next:
