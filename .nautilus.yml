@@ -52,6 +52,16 @@ executors:
 
           var ncov = input.executed.response.results? input.executed.response.results[0] : undefined;
 
+          var xunfeidata = input.request.event.output.payload.xunfeiyun;
+          var data = xunfeidata;
+
+          for (var di in xunfeidata.data) {
+            var dt = xunfeidata.data[di];
+            if (dt['sub'] === 'nlp' && dt['intent']['service'] === 'OS6981162467.FindAgenda' && dt['intent']['intentType'] === 'custom' && dt['intent']['semantic']) {
+              data = dt;
+            }
+          }
+
           var userId = xunfeidata['_context']['userId'];
           var deviceId = xunfeidata['_context']['deviceId'];
           var text = data['intent']['text'];
@@ -92,16 +102,6 @@ executors:
 
             var updatetime = ncov.updateTime;
             var generalRemark = ncov.generalRemark;
-
-            var xunfeidata = input.request.event.output.payload.xunfeiyun;
-            var data = xunfeidata;
-
-            for (var di in xunfeidata.data) {
-              var dt = xunfeidata.data[di];
-              if (dt['sub'] === 'nlp' && dt['intent']['service'] === 'OS6981162467.FindAgenda' && dt['intent']['intentType'] === 'custom' && dt['intent']['semantic']) {
-                data = dt;
-              }
-            }
 
             output.content['0'] = {
               processor: 'S',
