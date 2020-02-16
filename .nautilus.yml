@@ -50,31 +50,7 @@ executors:
           // filter source code here start
           var input = JSON.parse(datasource);
 
-          var ncov = input.executed.response.results[0];
-
-          var confirmedCount = ncov.confirmedCount;
-          var confirmedIncr = ncov.confirmedIncr;
-          var suspectedCount = ncov.suspectedCount;
-          var suspectedIncr = ncov.suspectedIncr;
-          var curedCount = ncov.curedCount;
-          var curedIncr = ncov.curedIncr;
-          var deadCount = ncov.deadCount;
-          var deadIncr = ncov.deadIncr;
-          var seriousCount = ncov.seriousCount;
-          var seriousIncr = ncov.seriousIncr;
-
-          var updatetime = ncov.updateTime;
-          var generalRemark = ncov.generalRemark;
-
-          var xunfeidata = input.request.event.output.payload.xunfeiyun;
-          var data = xunfeidata;
-
-          for (var di in xunfeidata.data) {
-            var dt = xunfeidata.data[di];
-            if (dt['sub'] === 'nlp' && dt['intent']['service'] === 'OS6981162467.FindAgenda' && dt['intent']['intentType'] === 'custom' && dt['intent']['semantic']) {
-              data = dt;
-            }
-          }
+          var ncov = input.executed.response.results? input.executed.response.results[0] : undefined;
 
           var userId = xunfeidata['_context']['userId'];
           var deviceId = xunfeidata['_context']['deviceId'];
@@ -99,39 +75,74 @@ executors:
             describe: ['S']
           };
 
-          output.content['0'] = {
-            processor: 'S',
-            option: 'S.AN',
-            parameters: {
-              an: '截至' + formatDateTime(new Date(updatetime)) + '数据'
-                  + ', \n国内累计确诊病例' + confirmedCount + '人'
-                  + (confirmedIncr? (', \n新增' + confirmedIncr + '人') : '')
-                  + ', \n疑似' + suspectedCount + '人'
-                  + (suspectedIncr? (', \n新增' + suspectedIncr + '人') : '')
-                  + ', \n治愈' + curedCount + '人'
-                  + (curedIncr? (', \n新增' + curedIncr + '人') : '')
-                  + ', \n死亡' + deadCount + '人'
-                  + (deadIncr? (', \n新增' + deadIncr + '人') : '')
-                  + ', \n重症' + seriousCount + '人'
-                  + (seriousIncr? (', \n新增' + seriousIncr + '人') : '')
-                  + ', \n' + generalRemark,                             // 累计确诊病例
-              tips: '数据来自丁香园'
-                  + '|' + ncov.remark1
-                  + '|' + ncov.remark2
-                  + '|' + ncov.remark3
-                  + '|' + ncov.note1
-                  + '|' + ncov.note2
-                  + '|' + ncov.note3
-            },
-            input: {
-              textvariables: [
-                {name: 'countto', value: formatDateTime(new Date(updatetime))},
-                {name: 'confirmed', value: confirmedCount}
-              ]
-            }
-          };
-
           var standardnext = {};
+
+          // 增加丁香数据服务器异常处理
+          if (ncov) {
+            var confirmedCount = ncov.confirmedCount;
+            var confirmedIncr = ncov.confirmedIncr;
+            var suspectedCount = ncov.suspectedCount;
+            var suspectedIncr = ncov.suspectedIncr;
+            var curedCount = ncov.curedCount;
+            var curedIncr = ncov.curedIncr;
+            var deadCount = ncov.deadCount;
+            var deadIncr = ncov.deadIncr;
+            var seriousCount = ncov.seriousCount;
+            var seriousIncr = ncov.seriousIncr;
+
+            var updatetime = ncov.updateTime;
+            var generalRemark = ncov.generalRemark;
+
+            var xunfeidata = input.request.event.output.payload.xunfeiyun;
+            var data = xunfeidata;
+
+            for (var di in xunfeidata.data) {
+              var dt = xunfeidata.data[di];
+              if (dt['sub'] === 'nlp' && dt['intent']['service'] === 'OS6981162467.FindAgenda' && dt['intent']['intentType'] === 'custom' && dt['intent']['semantic']) {
+                data = dt;
+              }
+            }
+
+            output.content['0'] = {
+              processor: 'S',
+              option: 'S.AN',
+              parameters: {
+                an: '截至' + formatDateTime(new Date(updatetime)) + '数据'
+                    + ', \n国内累计确诊病例' + confirmedCount + '人'
+                    + (confirmedIncr? (', \n新增' + confirmedIncr + '人') : '')
+                    + ', \n疑似' + suspectedCount + '人'
+                    + (suspectedIncr? (', \n新增' + suspectedIncr + '人') : '')
+                    + ', \n治愈' + curedCount + '人'
+                    + (curedIncr? (', \n新增' + curedIncr + '人') : '')
+                    + ', \n死亡' + deadCount + '人'
+                    + (deadIncr? (', \n新增' + deadIncr + '人') : '')
+                    + ', \n重症' + seriousCount + '人'
+                    + (seriousIncr? (', \n新增' + seriousIncr + '人') : '')
+                    + ', \n' + generalRemark,                             // 累计确诊病例
+                tips: '数据来自丁香园'
+                    + '|' + ncov.remark1
+                    + '|' + ncov.remark2
+                    + '|' + ncov.remark3
+                    + '|' + ncov.note1
+                    + '|' + ncov.note2
+                    + '|' + ncov.note3
+              },
+              input: {
+                textvariables: [
+                  {name: 'countto', value: formatDateTime(new Date(updatetime))},
+                  {name: 'confirmed', value: confirmedCount}
+                ]
+              }
+            };
+          } else {
+            output.content['0'] = {
+              processor: 'S',
+              option: 'S.AN',
+              parameters: {
+                an: '丁香园服务问题暂时无法获得数据, 请稍候再试!'
+              }
+            }
+          }
 
           standardnext.announceTo = [userId + ';' + deviceId];
           standardnext.announceType = 'inteligence_mix';
